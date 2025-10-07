@@ -21,7 +21,7 @@ def visualize_temporal_consistency(max_batched_length_per_demo, gpus, sampled_pl
         sampled_plans.shape[0], len(labels)
     )
 
-    from MulticoreTSNE import MulticoreTSNE as TSNE
+    from calvin_agent.utils.tsne_wrapper import TSNE
 
     x_tsne = TSNE(perplexity=40, n_jobs=8).fit_transform(sampled_plans.cpu())
 

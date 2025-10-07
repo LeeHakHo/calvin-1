@@ -7,12 +7,14 @@ matplotlib
 opencv-python
 omegaconf
 plotly
-pyhash
+# pyhash removed: replaced by a small pure-Python fnv1_32 implementation
+# in calvin_agent.utils.hash_utils to avoid building native extensions on ARM.
 pytorch-lightning==1.8.6
 lightning_lite
 torch==1.13.1
 torchvision
-MulticoreTSNE
+# MulticoreTSNE removed (optional). The project uses TSNE for visualization;
+# fallback to scikit-learn's TSNE or openTSNE is available at runtime.
 gitpython
 scipy
 sentence-transformers

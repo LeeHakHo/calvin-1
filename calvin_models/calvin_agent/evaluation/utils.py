@@ -13,14 +13,20 @@ import hydra
 import numpy as np
 from numpy import pi
 from omegaconf import OmegaConf
-import pyhash
+from calvin_agent.utils.hash_utils import fnv1_32_hasher
 import torch
 
-hasher = pyhash.fnv1_32()
+hasher = fnv1_32_hasher()
 logger = logging.getLogger(__name__)
 
 
 def get_default_model_and_env(train_folder, dataset_path, checkpoint, env=None, device_id=0):
+    #hayden
+    if device_id < 0 or not torch.cuda.is_available():
+        device = torch.device("cpu")
+    else:
+        device = torch.device("cuda", device_id)
+    
     train_cfg_path = Path(train_folder) / ".hydra/config.yaml"
     train_cfg_path = format_sftp_path(train_cfg_path)
     cfg = OmegaConf.load(train_cfg_path)
@@ -37,7 +43,6 @@ def get_default_model_and_env(train_folder, dataset_path, checkpoint, env=None, 
     data_module.setup()
     dataloader = data_module.val_dataloader()
     dataset = dataloader.dataset.datasets["lang"]
-    device = torch.device(f"cuda:{device_id}")
 
     if env is None:
         rollout_cfg = OmegaConf.load(Path(__file__).parents[2] / "conf/callbacks/rollout/default.yaml")
@@ -52,7 +57,8 @@ def get_default_model_and_env(train_folder, dataset_path, checkpoint, env=None, 
     model.freeze()
     if cfg.model.action_decoder.get("load_action_bounds", False):
         model.action_decoder._setup_action_bounds(cfg.datamodule.root_data_dir, None, None, True)
-    model = model.cuda(device)
+    #hayden
+    model = model.to(device)
     print("Successfully loaded model.")
 
     return model, env, data_module

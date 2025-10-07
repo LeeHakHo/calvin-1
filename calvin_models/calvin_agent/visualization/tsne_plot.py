@@ -3,7 +3,7 @@ import logging
 from typing import Any, Optional
 
 from calvin_agent.rollout.rollout import Rollout
-from MulticoreTSNE import MulticoreTSNE as TSNE
+from calvin_agent.utils.tsne_wrapper import TSNE
 import numpy as np
 from PIL import Image
 import plotly.express as px
